@@ -30,7 +30,15 @@ final class OpenSSLEncrypt implements EncryptInterface
      */
     public function __construct(string $algorithm)
     {
-        if (false === in_array($algorithm, openssl_get_cipher_methods(true))) {
+        $algorithm = mb_strtolower($algorithm);
+        $methods = openssl_get_cipher_methods(true);
+        $methods = array_map(
+            function ($name) {
+                return mb_strtolower($name);
+            },
+            $methods
+        );
+        if (false === in_array($algorithm, $methods)) {
             throw new EncryptException('Algorithm no exists');
         }
 
